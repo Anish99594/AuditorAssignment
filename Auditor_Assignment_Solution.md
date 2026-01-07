@@ -2,11 +2,11 @@
 
 ## Assumptions
 
-Before proceeding with the tasks, I make the following assumptions:
+The following assumptions are made to resolve ambiguities in the problem statement:
 
-1. **[V] Specification Language**: **[V] is Veridise’s declarative specification language** described in your prompt (statements of the form `action(target, property)`; blockchain variables like `sender`, `value`; utility like `old(...)`, `balance(acct)`, `fsum(...)`; and the `|=>` pre/post operator).
+1. **[V] Specification Language**: **[V] is Veridise's declarative specification language** (statements of the form `action(target, property)`; blockchain variables like `sender`, `value`; utilities like `old(...)`, `balance(acct)`, `fsum(...)`; and the `|=>` pre/post operator).
 
-2. **RefundableCrowdsale**: I assume this refers to a typical OpenZeppelin-style RefundableCrowdsale contract where:
+2. **RefundableCrowdsale**: This refers to a typical OpenZeppelin-style RefundableCrowdsale contract where:
    - `goalReached()` returns `true` if the funding goal has been met
    - `isFinalized` is a boolean state variable (or equivalently a view function) indicating if the crowdsale has been finalized
    - `claimRefund()` allows participants to claim refunds when the goal is not reached
@@ -32,7 +32,7 @@ reverted(RefundableCrowdsale.claimRefund,
 **Notes / assumptions**:
 - In [V], `this` refers to the contract instance receiving the transaction.
 - If `isFinalized` is a function instead of a variable, write `!this.isFinalized()`.
-- The statement above directly matches your English: “if (goalReached OR not finalized) then claimRefund reverts.”
+- The statement above directly matches the English requirement: "if (goalReached OR not finalized) then claimRefund reverts."
 
 ### 1.2 RefundableCrowdsale's withdraw Transaction
 
@@ -89,7 +89,7 @@ function attempt(uint guess) external payable {
 
 ### Comparison with Specification
 
-**Under the [V] semantics you pasted, `attempt` *does* adhere to the given specification**, with one important caveat about a naming ambiguity.
+**Under the [V] semantics, `attempt` *does* adhere to the given specification**, with one important caveat about a naming ambiguity.
 
 1. **Precondition** (`Game.started && value > Game.cost`)
    - In [V], `value` is the **native tokens attached to the call** (i.e., Solidity `msg.value`).
@@ -104,14 +104,14 @@ function attempt(uint guess) external payable {
    - Therefore after any successful attempt, `value` equals the cumulative sum of all previous successful guesses, which matches the intent of the `fsum` expression.
 
 **Caveat / ambiguity**:
-- The contract has a storage variable named `value` (`uint value;`), and [V] also has a blockchain variable named `value` (the callvalue). In [V], **unqualified `value` means callvalue**, while storage should be referenced as `this.value` (or `Game.value` in your statement).
-- Your statement uses `Game.value` on line 4, so it clearly intends the storage variable there, and uses bare `value` on line 2, so it clearly intends callvalue there. Under that reading, the spec matches the implementation.
+- The contract has a storage variable named `value` (`uint value;`), and [V] also has a blockchain variable named `value` (the callvalue). In [V], **unqualified `value` means callvalue**, while storage should be referenced as `this.value` (or `Game.value` in the specification).
+- The specification uses `Game.value` on line 4, so it clearly intends the storage variable there, and uses bare `value` on line 2, so it clearly intends callvalue there. Under that reading, the spec matches the implementation.
 
 ---
 
 ## 3. Detection: Vulnerabilities in Game.sol
 
-After analyzing the `Game.sol` contract, I've identified the following vulnerabilities:
+After analyzing the `Game.sol` contract, the following vulnerabilities were identified:
 
 ### 3.1 **Missing Access Control on `setTarget` Function**
 
@@ -362,5 +362,5 @@ This assignment covered:
 3. **Vulnerability detection** in smart contracts through security analysis
 4. **Exploit description** of a known DeFi vulnerability
 
-All analyses were conducted with clear assumptions and detailed explanations to ensure clarity and educational value.
+All analyses were conducted with clear assumptions and detailed explanations.
 
